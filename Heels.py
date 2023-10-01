@@ -7,41 +7,63 @@ app = Flask(__name__)
 def index():
     return 'Heels'
 
-Heels = [
-    {'stagename':'Randy Orton',
+wrestlers = [
+    {'wrestler':'Randy Orton',
      'height':'6ft 3in',
      'weight':'285',
      'smack_talk':[{'body':'RKO'}]
      },
-     {'stagename':'Matt Riddle',
+     {'wrestler':'Matt Riddle',
      'height':'6ft 2in',
      'weight':'260',
      'smack_talk':[{'body':'BRO'}]
      },
-     {'stagename':'Kevin Owens',
+     {'wrestler':'Kevin Owens',
      'height':'5ft 11in',
      'weight':'285',
      'smack_talk':[{'body':'Pop up Power Bomb'}]
      },
-     {'stagename':'Sami Zayne',
+     {'wrestler':'Sami Zayne',
      'height':'6ft',
      'weight':'256',
      'smack_talk':[{'body':'Puts the ginga in jinja'}]
      }
 ]
 
-@app.get('/Heel')
-def get_Heels():
-    return {'Heels': Heels}
+@app.get('/wrester')
+def get_wrestler():
+    return {'Wrestler': wrestlers}, 200
 
 #routes for each
 
-@app.post('/Heel')
-def create_Heel():
-    Heel_data = request.get_json()
-    print (Heel_data)    
+@app.post('/wrestler')
+def create_wrestler():
+    wrestler_data = request.get_json()
+    wrestlers.append(wrestler_data)
+    return wrestler_data, 201
 
-# @app.put('/Heel')
-#     pass
-# @app.delete('/Heel')
-#     pass
+@app.put('/wrestler') # type: ignore
+def update_wrestler():
+    wrestler_data = request.get_json()
+    filtered_wrestlers = list(filter(lambda wrestler: wrestler['name'] == wrestler_data['name'], wrestlers))
+    if filtered_wrestlers:
+        # Update the first matching wrestler's name
+        filtered_wrestlers[0]['name'] = wrestler_data['new name']
+        return filtered_wrestlers[0], 200
+    else:
+        return {"message": "Wrestler not found"}, 404
+    
+    
+    # wrestler = list(filter(lambda wrestler: wrestler['wrestler_name'] == wrestler_data['wrestler_name'],wrestlers))[0]
+    # wrestler['wrestler_name'] = wrestler_data['new_wrestler_name']
+    # return wrestlers, 200
+    
+
+@app.delete('/wrestler') # type: ignore
+def delete_wrestler():
+    wrestler_data = request.get_json()
+    for wrestler in enumerate(wrestlers):
+        if wrestler['wrestler_name'] == wrestler_data['wrestler_name']:
+            wrestlers.pop(i)
+    return {'message':f'{wrestler_data["wrestler_name"]} deleted'}
+
