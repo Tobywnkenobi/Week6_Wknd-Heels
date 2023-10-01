@@ -27,6 +27,11 @@ wrestlers = [
      'height':'6ft',
      'weight':'256',
      'smack_talk':[{'body':'Puts the ginga in jinja'}]
+     },
+     {'wrestler':'Toby',
+      'height':'5ft 5in',
+      'weight':'223',
+      'smack_talk':[{'body':'Fun sized'}]
      }
 ]
 
@@ -42,16 +47,19 @@ def create_wrestler():
     wrestlers.append(wrestler_data)
     return wrestler_data, 201
 
-@app.put('/wrestler') # type: ignore
+@app.put('/wrestler')
 def update_wrestler():
     wrestler_data = request.get_json()
-    filtered_wrestlers = list(filter(lambda wrestler: wrestler['name'] == wrestler_data['name'], wrestlers))
+    filtered_wrestlers = list(filter(lambda wrestler: wrestler['wrestler'] == wrestler_data['name'], wrestlers))
+    
     if filtered_wrestlers:
         # Update the first matching wrestler's name
         filtered_wrestlers[0]['name'] = wrestler_data['new name']
         return filtered_wrestlers[0], 200
     else:
         return {"message": "Wrestler not found"}, 404
+
+  
     
     
     # wrestler = list(filter(lambda wrestler: wrestler['wrestler_name'] == wrestler_data['wrestler_name'],wrestlers))[0]
@@ -59,11 +67,10 @@ def update_wrestler():
     # return wrestlers, 200
     
 
-@app.delete('/wrestler') # type: ignore
+@app.delete('/wrestler')
 def delete_wrestler():
     wrestler_data = request.get_json()
     for wrestler in enumerate(wrestlers):
-        if wrestler['wrestler_name'] == wrestler_data['wrestler_name']:
+        if wrestler['wrestler'] == wrestler_data['wrestler']:
             wrestlers.pop(i)
-    return {'message':f'{wrestler_data["wrestler_name"]} deleted'}
-
+    return {'message':f'{wrestler_data["wrestler"]} deleted'}, 202
